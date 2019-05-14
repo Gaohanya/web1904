@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./bootstrap/dist/css/bootstrap.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+    </div>
+    <script>
+        //封装按钮
+        const SButton = {
+            props: {
+                color: String,
+                size: String,
+                block: Boolean,
+                active: Boolean,
+                disabled: Boolean
+            },
+            template: `
+                <button
+                    :disabled="disabled" 
+                    :class="['btn',colorName,{
+                        'btn-lg': size === 'lg',
+                        'btn-sm': size === 'sm',
+                        'btn-xs': size === 'xs',
+                        'btn-block': block,
+                        active
+                    }]"
+                >
+                    <slot/>
+                </button>
+            `,
+            computed: {
+                colorName() {
+                    return "btn-" + this.color
+                }
+            }
+        };
+        //封装表格
+        const STable = {
+                props: {
+                    tableStyle: Array,
+                    colums: Array,
+                    data: Array,
+                    striped: Boolean,
+                    bordered: Boolean,
+                    hover: Boolean
+                },
+                template: `
+                    <div>
+                        <table :class="[
+                                    'table', {
+                                    'table-striped': striped,
+                                    'table-bordered': bordered,
+                                    'table-hover':hover
+                        }]">
+                            <thead>
+                                <th v-for='item in colums'>{{item.title}}</th>
+                            </thead>
+                            <tbody>
+                                <tr v-for='item in data'>
+                                    <td v-for='col in colums'>{{item[col.key]}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    `
+            }
+            //封装图标
+        const SIcon = {
+            props: {
+                name: String,
+                size: String,
+                color: String
+            },
+            template: `
+                <button
+                    :class="['btn',SColor,{
+                        'btn-lg': size === 'lg',
+                        'btn-sm': size === 'sm',
+                        'btn-xs': size === 'xs',
+                    }]"
+                >
+                    <span 
+                         :class="['glyphicon',SName]" 
+                    >
+                    </span>
+                </button>
+            `,
+            computed: {
+                SName() {
+                    return "glyphicon-" + this.name
+                },
+                SColor() {
+                    return "btn-" + this.color
+                }
+            }
+        };
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                colums: [{
+                    key: "id",
+                    title: "ID",
+                }, {
+                    key: "name",
+                    title: "姓名"
+                }, {
+                    key: "age",
+                    title: "年龄"
+                }],
+                data: [{
+                    id: 1,
+                    age: 20,
+                    name: "张三"
+                }, {
+                    id: 2,
+                    age: 22,
+                    name: "李四"
+                }, {
+                    id: 3,
+                    age: 10,
+                    name: "王二"
+                }]
+            },
+            template: `
+                <div id="app">
+                    <SButton color="success" size="lg" block active disabled>123</SButton>
+                    <STable  :colums="colums" :data="data" striped  bordered hover></STable>
+                    <SIcon name="asterisk" size="lg" color="danger"></SIcon>
+                </div>
+            `,
+            components: {
+                SButton,
+                STable,
+                SIcon
+            }
+        })
+    </script>
+</body>
+
+</html>

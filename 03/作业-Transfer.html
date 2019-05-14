@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>wanshi-Transfer</title>
+    <link rel="icon" href="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2647437716,794720031&fm=26&gp=0.jpg">
+    <script src='https://cdn.bootcss.com/vue/2.6.10/vue.js'></script>
+    <script src="https://wanshi1024.github.io/ws_lib/util.js"></script>
+    <link rel="stylesheet" href="https://daneden.github.io/animate.css/animate.min.css">
+    <style>
+        ul {
+            padding: 0;
+            margin: 0;
+            user-select: none;
+            width: 250px;
+            height: 100%;
+            float: left;
+            border: 1px solid #ebeef5;
+            border-radius: 4px;
+        }
+        
+        li {
+            list-style: none;
+            padding: 0 6%;
+        }
+        
+        #app {
+            width: 800px;
+            margin: 10px auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .switch {
+            height: 208px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .switch button {
+            margin: 10px 0;
+            background-color: #f7f7f7;
+            outline: none;
+            border: 1px #ddd solid;
+            cursor: pointer;
+            width: 54px;
+            height: 30px;
+            transition: 300ms all;
+            -webkit-transition: 300ms all;
+            -moz-transition: 300ms all;
+            -ms-transition: 300ms all;
+            -o-transition: 300ms all;
+        }
+        
+        .switch .active {
+            color: white;
+            background-color: #2d8cf0;
+        }
+        
+        ul>li:first-child {
+            height: 40px;
+            line-height: 40px;
+            width: 100%;
+            background: #f5f7fa;
+            border-bottom: 1px solid #ebeef5;
+            box-sizing: border-box;
+        }
+        
+        ul>li:not(:first-child) {
+            line-height: 2em;
+        }
+        
+        input[type=checkbox] {
+            width: 15px;
+            height: 15px;
+        }
+        
+        label {
+            vertical-align: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <ul>
+            <li>
+                <input type="checkbox" id="left_all_select" v-model="left_all_select">
+                <label for="left_all_select">全选</label>
+            </li>
+            <li v-for="item in left" class="animated fadeInLeft">
+                <input type="checkbox" :id="item" :value="item" v-model="left_val">
+                <label :for="item">选项{{item}}</label>
+            </li>
+            <li v-show="left.length===0">暂时无数据!</li>
+        </ul>
+        <div class="switch">
+            <button @click="moveToRight" :disabled="letf_btn" :class="{active:!letf_btn}"> &gt; </button>
+            <button @click="moveToLeft" :disabled="right_btn" :class="{active:!right_btn}"> &lt; </button>
+        </div>
+        <ul>
+            <li>
+                <input type="checkbox" id="right_all_select" v-model="right_all_select">
+                <label for="right_all_select">全选</label>
+            </li>
+            <li v-for="item in right" class="animated fadeInRight">
+                <input type="checkbox" :id="item" :value="item" v-model="right_val">
+                <label :for="item">选项{{item}}</label>
+            </li>
+            <li v-show="right.length===0">暂时无数据!</li>
+        </ul>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    left: [1, 2, 3, 4, 5],
+                    right: [6, 7, 8, 9, 10],
+                    left_val: [],
+                    right_val: [],
+                    left_all_select: false,
+                    right_all_select: false,
+                    letf_btn: true,
+                    right_btn: true
+                }
+            },
+            watch: {
+                left_all_select(val) {
+                    if (val) {
+                        this.left_val = [...this.left]
+                    } else {
+                        if (this.left.length != this.left_val.length) {
+                            return
+                        }
+                        this.left_val = []
+                    }
+                },
+                right_all_select(val) {
+                    if (val) {
+                        this.right_val = [...this.right]
+                    } else {
+                        if (this.right.length != this.right_val.length) {
+                            return
+                        }
+                        this.right_val = []
+                    }
+                },
+                left_val(val) {
+                    let length = val.length
+                    if (length === 0) {
+                        this.letf_btn = true
+                    } else {
+                        this.letf_btn = false
+                    }
+                    if (length === this.left.length && length !== 0) {
+                        this.left_all_select = true
+                    } else {
+                        this.left_all_select = false
+                    }
+                },
+                right_val(val) {
+                    let length = val.length
+                    if (length === 0) {
+                        this.right_btn = true
+                    } else {
+                        this.right_btn = false
+                    }
+                    if (length == this.right.length && length !== 0) {
+                        this.right_all_select = true
+                    } else {
+                        this.right_all_select = false
+                    }
+                }
+            },
+            methods: {
+                moveToRight() {
+                    this.right.push(...this.left_val);
+                    this.left_val.forEach(item => {
+                        this.left = removeElement(this.left, item)
+                    })
+                    this.left_val = []
+                    this.left_all_select = false
+                },
+                moveToLeft() {
+                    this.left.push(...this.right_val);
+                    this.right_val.forEach(item => {
+                        this.right = removeElement(this.right, item)
+                    })
+                    this.right_val = []
+                    this.right_all_select = false
+                },
+            },
+        })
+    </script>
+</body>
+
+</html>

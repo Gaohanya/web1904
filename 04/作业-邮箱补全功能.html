@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        #app {
+            width: 200px;
+            height: 200px;
+            margin: 100px auto;
+        }
+        
+        input {
+            width: 200px;
+            height: 20px;
+        }
+        
+        ul {
+            margin: 5px 0 0 0;
+            padding: 0;
+            width: 204px;
+            height: 60px;
+            list-style: none;
+        }
+        
+        li {
+            height:20px;
+        }
+        .active{
+            background: #123122;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <input 
+            type="text" 
+            v-model="val" 
+            @keydown.down.prevent="down()" 
+            @keydown.up.prevent="up()"
+            @keydown.enter="enter()"
+        >
+        <ul>
+            <li 
+                v-for="(item,index) in VIndex"
+                :class="{active:valIndex===index}"
+            >
+            {{item}}
+        </li>
+        </ul>
+    </div>
+
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                val: "",
+                valIndex:0,
+                valList: ["@qq.com","@163.com","@sina.com"]
+            },
+            computed: {
+                VIndex(){
+                    if(!this.val)  return [];//如果内容为空 valList不显示
+                    if(/\@/.test(this.val)) return [];//正则如果val中有@ valList不显示
+                    return this.valList.map(item => {//map创建新数组 
+                       return this.val + item
+                    })
+                }
+            },
+            methods: {
+                down() {
+                    this.valIndex++;
+                    if(this.valIndex >= this.valList.length){
+                            this.valIndex = this.valList.length-1;
+                    }
+                },
+                up() {
+                    this.valIndex--;
+                    if(this.valIndex <= 0  ){
+                        this.valIndex =0;
+                    }
+                },
+                //回车绑定内容和当前VIndex数组邮箱后缀
+                enter(){
+                    this.val =  this.VIndex[this.valIndex];
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

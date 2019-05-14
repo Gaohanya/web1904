@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+
+<body>
+    <div id="app">
+        <ul>
+            <li v-for="item in messageList">{{item}}</li>
+        </ul>
+        <div>{{text}}</div>
+        <input type="text" v-model="text" />
+        <button v-on:click="handlePublish">添加</button>
+    </div>
+    <script>
+        const vm = new Vue({
+            el: "#app",
+            data: {
+                messageList: [],
+                text: '请在这里输入内容'
+            },
+            methods: {
+                handlePublish() {
+                    this.messageList.push(this.text);
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
